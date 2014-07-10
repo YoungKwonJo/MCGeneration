@@ -1,0 +1,110 @@
++++++++++++++++
+  904  wget http://fastjet.fr/repo/fastjet-3.0.6.tar.gz
+ 1018  mkdir install
+ 1021  cd FASTJET/fastjet-3.0.6
+ 1023  ./configure --prefix=/home/youngjo/kcms09/FASTJET/install
+ 1024  make -j 10
+ 1025  make install
+
+++++++++++++++++
+  922  wget http://www.hepforge.org/archive/lhapdf/LHAPDF-6.1.3.tar.gz
+  923  mkdir install
+  924  tar zxvf LHAPDF-6.1.3.tar.gz
+  926  cd LHAPDF-6.1.3
+ 1007  ./configure --prefix=/home/youngjo/kcms09/LHAPDF/install
+ 1008  make -j 9
+ 1009  make install
+
+++++++++++++++++
+ 1038  wget http://lcgapp.cern.ch/project/simu/HepMC/download/HepMC-2.06.09.tar.gz
+ 1037  mkdir install
+ 1039  tar zxvf HepMC-2.06.09.tar.gz
+ 1042  cd HepMC-2.06.09
+ 1047  ./configure --prefix=/home/youngjo/kcms09/HepMC/install --with-momentum=GEV --with-length=CM
+ 1048  make -j 9
+ 1049  make install
+ 1044   wget http://www.hepforge.org/archive/lhapdf/pdfsets/6.1/CT10nlo.tar.gz -O- | tar xz -C /home/youngjo/kcms09/LHAPDF/install/share/LHAPDF
+
+++++++++++++++++
+ 1060  wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8185.tgz
+ 1059  mkdir install
+ 1063  tar zxvf pythia8185.tgz
+ 1066  cd pythia8185
+ 1072  ./configure --with-hepmc=/home/youngjo/kcms09/HepMC/install --with-hepmcversion=2.06.09
+ 1073  make -j 9
+
+++++++++++++++++
+ 1095  mkdir Madgraph
+ 1096  cd Madgraph/
+ 1099  wget https://launchpad.net/mg5amcnlo/2.0/2.1.0/+download/MG5_aMC_v2.1.2.tar.gz
+ 1101  tar zxvf MG5_aMC_v2.1.2.tar.gz
+ 1105  cd MG5_aMC_v2_1_2/
+ 1111  vi input/mg5_configuration.txt
+######################
+ pythia8_path = /home/youngjo/kcms09/PYTHIA8/pythia8185
+ hepmc_path = /home/youngjo/kcms09/HepMC/install
+ run_mode = 2
+ lhapdf = /home/youngjo/kcms09/LHAPDF/install/bin/lhapdf-config
+ fastjet = /home/youngjo/kcms09/FASTJET/install/bin/fastjet-config
+####################
+
+++++++++++++++++
+ 1107  ./bin/mg5_aMC
+####################
+MG5_aMC>generate  p p > t t~ b b~ [all=QCD]
+MG5_aMC>output pp2ttbb_allQCD_20140709
+###################
+
+++++++++++++++++
+ 1114  cd pp2ttbb_allQCD_20140709/
+ 1126  vi Cards/amcatnlo_configuration.txt
+###################
+ pythia8_path = /home/youngjo/kcms09/PYTHIA8/pythia8185
+ hepmc_path = /home/youngjo/kcms09/HepMC/install
+ run_mode = 2
+###################
+ 1138  cd Cards/
+ 1140  cp madspin_card_default.dat madspin_card.dat
+
+++++++++++++++++
+ 1137  vi run.sh
+########################
+#/bin/bash
+
+nevt=${1}
+echo "%MSG-MG5 number of events requested = $nevt"
+rnum=${2}
+#echo "%MSG-MG5 random seed used for the run = $rnum"
+name=${3}
+#echo "%MSG-MG5 number of name = $name"
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+export SCRAM_ARCH=slc6_amd64_gcc472
+
+cd /home/youngjo/kcms09/cmssw/CMSSW_5_3_19
+eval `scramv1 runtime -sh`
+#cmsenv
+cd -
+cd /home/youngjo/kcms09/Madgraph/MG5_aMC_v2_1_2/pp2ttbb_allQCD_20140709
+
+echo "done" >> runscript.dat
+
+domadspin=0
+if [ -f ./Cards/madspin_card.dat ] ;then
+  #set random seed for madspin
+  rnum2=$(($rnum+1000000))
+  echo "$(echo `echo "set seed $rnum2"` | cat - ./Cards/madspin_card.dat)" > ./Cards/madspin_card.dat
+  domadspin=1
+fi
+
+runname=nlo_pythia8_iseed_$rnum_$name
+
+#generate events
+cat runscript.dat | ./bin/generate_events aMC@NLO -x -n $runname
+exit 0
+##########################
+
++++++++++++++++++++
+ 1143  chmod 755 run.sh
+ 1145  nohup ./run.sh 10000 23 test >& log.txt &
+
+

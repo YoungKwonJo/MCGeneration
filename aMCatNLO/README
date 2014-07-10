@@ -1,0 +1,67 @@
+ INSTALL and HOWTO use aMCatNLO in lxplus.cern.ch or slc6 local machine
+
+1. for easy Environment setup 
+++++++++
+source /afs/cern.ch/cms/cmsset_default.sh
+export SCRAM_ARCH=slc6_amd64_gcc472
+cd $MYWORKDIR/cmssw/CMSSW_5_3_19/src/
+eval `scramv1 runtime -sh`
+++++++++
+
+2. Install
+ + http://fastjet.fr/repo/fastjet-3.0.6.tar.gz
+ + http://www.hepforge.org/archive/lhapdf/LHAPDF-6.1.3.tar.gz 
+ + http://lcgapp.cern.ch/project/simu/HepMC/download/HepMC-2.06.09.tar.gz
+ + http://home.thep.lu.se/~torbjorn/pythia8/pythia8185.tgz
+ + https://launchpad.net/mg5amcnlo/2.0/2.1.0/+download/MG5_aMC_v2.1.2.tar.gz 
+
+for more,
+ + http://cp3.irmp.ucl.ac.be/downloads/Delphes-3.1.2.tar.gz
+
+If it is not compiled, change a header'Pythia.h'.
+> vi modules/PileUpMergerPythia8.cc
+> vi readers/DelphesPythia8.cpp
+
+ from #include "Pythia.h"  
+ to   #include "Pythia8/Pythia.h" 
+
+3. generate code in Madgraph for NLO
+ >cd $MG5Directry
+ > vi input/mg5_configuration.txt
+
+#+++++
+ pythia8_path = /bla/bla/PYTHIA8/pythia8185
+ pythia8_path = /bla/bla/PYTHIA8/install
+ hepmc_path   = /bla/bla/HepMC/install
+ lhapdf       = /bla/bla/LHAPDF/install/bin/lhapdf-config
+ fastjet      = /bla/bla/FASTJET/install/bin/fastjet-config
+#+++++
+add the lines in input/mg5_configuration.txt.
+Perhaps, we need to a file"examples/config.sh" in the folder "pythia8185" for Pythia8 hadronization.
+
+ >./bin/mg5_aMC
+
+MG5_aMC>generate  p p >  t t~ b b~ [ all= QCD]
+MG5_aMC>output pp2ttbb_allqcd_20140709
+MG5_aMC> press a key 'ctrl+D'.
+
+>cd pp2ttbb_allqcd_20140709
+>vi Cards/amcatnlo_configuration.txt
+#########
+ pythia8_path = /afs/cern.ch/work/y/youngjo/slc6/PYTHIA8/pythia8185
+ hepmc_path = /afs/cern.ch/work/y/youngjo/slc6/HepMC/install
+ run_mode = 2
+# nb_core = None #optional
+##########
+add the lines.
+
+>vi Cards/run_card.dat
+######
+from  HERWIG6   = parton_shower
+to    PYTHIA8  = parton_shower
+######
+
+
+
+
+
