@@ -103,6 +103,9 @@ cd $LHEWORKDIR
 #cd /bla/bla/Madgraph/MG5_aMC_v2_1_2/pp2ll_allQCD_20140710
 #for batch system, you have to fix the link(LHEWORKDIR).
 
+echo "done" > runscript.dat
+echo "set nevents $nevt" >> runscript.dat
+echo "set iseed $rnum" >> runscript.dat
 echo "done" >> runscript.dat
 
 domadspin=0
@@ -126,4 +129,7 @@ exit 0
 > nohup ./run.sh 10000 12 test5 NLO >& log5.txt &
 ### nohup ./run.sh #_of_events seed name LO/NLO >& log_file_name &
 
++++++++++++
+cd Delphes
+./DelphesHepMC examples/delphes_card_CMS.tcl ${MG5_proces}/Events/pythia8_iseed_24_testN1_NLO/events_PYTHIA8_0.root ${MG5_proces}/Events/pythia8_iseed_24_testN1_NLO/events_PYTHIA8_0.hepmc
 
