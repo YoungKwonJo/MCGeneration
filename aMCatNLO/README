@@ -25,12 +25,12 @@ If it is not compiled, change a header'Pythia.h'.
  from #include "Pythia.h"  
  to   #include "Pythia8/Pythia.h" 
 
-3. generate code in Madgraph for NLO
+3. Generate code in Madgraph for NLO
  >cd $MG5Directry
  > vi input/mg5_configuration.txt
 
 #+++++
- pythia8_path = /bla/bla/PYTHIA8/pythia8185
+ #pythia8_path = /bla/bla/PYTHIA8/pythia8185
  pythia8_path = /bla/bla/PYTHIA8/install
  hepmc_path   = /bla/bla/HepMC/install
  lhapdf       = /bla/bla/LHAPDF/install/bin/lhapdf-config
@@ -45,14 +45,15 @@ MG5_aMC>generate  p p >  t t~ b b~ [ all= QCD]
 MG5_aMC>output pp2ttbb_allqcd_20140709
 MG5_aMC> press a key 'ctrl+D'.
 
+4. Event generation
 >cd pp2ttbb_allqcd_20140709
 >vi Cards/amcatnlo_configuration.txt
-#########
- pythia8_path = /afs/cern.ch/work/y/youngjo/slc6/PYTHIA8/pythia8185
+############################################
+ pythia8_path = /afs/cern.ch/work/y/youngjo/slc6/PYTHIA8/install
  hepmc_path = /afs/cern.ch/work/y/youngjo/slc6/HepMC/install
  run_mode = 2
 # nb_core = None #optional
-##########
+############################################
 add the lines.
 
 >vi Cards/run_card.dat
@@ -61,7 +62,67 @@ from  HERWIG6   = parton_shower
 to    PYTHIA8  = parton_shower
 ######
 
+> cd Cards/
+> cp madspin_card_default.dat madspin_card.dat
 
+++++++++++++++++
+> vi run.sh
+####################################################################
+#/bin/bash
 
+nevt=${1}
+echo "%MSG-MG5 number of events requested = $nevt"
+
+rnum=${2}
+echo "%MSG-MG5 random seed used for the run = $rnum"
+
+name=${3}
+echo "%MSG-MG5 name = $name"
+
+nlo=${4}
+echo "%MSG-MG5 (NLO, LO), which? : $nlo"
+
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+export SCRAM_ARCH=slc6_amd64_gcc472
+
+cd /home/youngjo/kcms09/cmssw/CMSSW_5_3_19
+eval `scramv1 runtime -sh`
+#cmsenv
+cd -
+export PYTHIA8=/home/youngjo/kcms09/PYTHIA8/install
+export PATH=$PYTHIA8/bin:$PATH
+if [ ! $?LD_LIBRARY_PATH ]; then
+  export LD_LIBRARY_PATH=$PYTHIA8/lib
+else
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHIA8/lib
+fi
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/youngjo/kcms09/HepMC/install/lib
+
+LHEWORKDIR=`pwd`
+cd $LHEWORKDIR
+#cd /home/youngjo/kcms09/Madgraph/MG5_aMC_v2_1_2/pp2ll_allQCD_20140710
+#for batch system, you have to fix the link(LHEWORKDIR).
+
+echo "done" >> runscript.dat
+
+domadspin=0
+if [ -f ./Cards/madspin_card.dat ] ;then
+  #set random seed for madspin
+  rnum2=$(($rnum+1000000))
+  echo "$(echo `echo "set seed $rnum2"` | cat - ./Cards/madspin_card.dat)" > ./Cards/madspin_card.dat
+  domadspin=1
+fi
+
+runname=pythia8_iseed_${rnum}_${name}_${nlo}
+
+#generate events
+cat runscript.dat | ./bin/generate_events aMC@$nlo -x -n $runname
+
+exit 0
+##############################################################################
+
++++++++++++++++++++
+> chmod 755 run.sh
+> nohup ./run.sh 10000 12 test5 NLO >& log5.txt &
 
 

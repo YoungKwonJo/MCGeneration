@@ -31,6 +31,7 @@
  1063  tar zxvf pythia8185.tgz
  1066  cd pythia8185
  1072  ./configure --with-hepmc=/home/youngjo/kcms09/HepMC/install --with-hepmcversion=2.06.09
+#or# ./configure --with-hepmc=/home/youngjo/kcms09/HepMC/install --with-hepmcversion=2.06.09 --enable-64bits --prefix=/home/youngjo/kcms09/PYTHIA8/install --lcgplatform=slc6_amd64_gcc472 --enable-shared
  1073  make -j 9
 
 ++++++++++++++++
@@ -73,10 +74,16 @@ MG5_aMC>output pp2ttbb_allQCD_20140709
 
 nevt=${1}
 echo "%MSG-MG5 number of events requested = $nevt"
+
 rnum=${2}
-#echo "%MSG-MG5 random seed used for the run = $rnum"
+echo "%MSG-MG5 random seed used for the run = $rnum"
+
 name=${3}
-#echo "%MSG-MG5 number of name = $name"
+echo "%MSG-MG5 name = $name"
+
+nlo=${4}
+echo "%MSG-MG5 (NLO, LO), which? : $nlo"
+
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc6_amd64_gcc472
 
@@ -84,7 +91,19 @@ cd /home/youngjo/kcms09/cmssw/CMSSW_5_3_19
 eval `scramv1 runtime -sh`
 #cmsenv
 cd -
-cd /home/youngjo/kcms09/Madgraph/MG5_aMC_v2_1_2/pp2ttbb_allQCD_20140709
+export PYTHIA8=/home/youngjo/kcms09/PYTHIA8/install
+export PATH=$PYTHIA8/bin:$PATH
+if [ ! $?LD_LIBRARY_PATH ]; then
+  export LD_LIBRARY_PATH=$PYTHIA8/lib
+else
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHIA8/lib
+fi
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/youngjo/kcms09/HepMC/install/lib
+
+LHEWORKDIR=`pwd`
+cd $LHEWORKDIR
+#cd /home/youngjo/kcms09/Madgraph/MG5_aMC_v2_1_2/pp2ttbb_allQCD_20140709
+#for batch system, you have to fix the link(LHEWORKDIR).
 
 echo "done" >> runscript.dat
 
@@ -96,15 +115,16 @@ if [ -f ./Cards/madspin_card.dat ] ;then
   domadspin=1
 fi
 
-runname=nlo_pythia8_iseed_$rnum_$name
+runname=pythia8_iseed_${rnum}_${name}_${nlo}
 
 #generate events
-cat runscript.dat | ./bin/generate_events aMC@NLO -x -n $runname
+cat runscript.dat | ./bin/generate_events aMC@$nlo -x -n $runname
+
 exit 0
 ##########################
 
 +++++++++++++++++++
  1143  chmod 755 run.sh
- 1145  nohup ./run.sh 10000 23 test >& log.txt &
+ nohup ./run.sh 10000 12 test5 NLO >& log5.txt &
 
 
