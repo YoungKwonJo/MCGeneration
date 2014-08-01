@@ -41,7 +41,7 @@ Perhaps, we need to a file"examples/config.sh" in the folder "pythia8185" for Py
 
  >./bin/mg5_aMC
 
-MG5_aMC>generate  p p >  t t~ b b~ [ all= QCD]
+MG5_aMC>generate  p p >  t t~ b b~ [QCD]
 MG5_aMC>output pp2ttbb_allqcd_20140709
 MG5_aMC> press a key 'ctrl+D'.
 
