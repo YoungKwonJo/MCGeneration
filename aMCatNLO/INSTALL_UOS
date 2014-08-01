@@ -52,7 +52,7 @@
 ++++++++++++++++
  1107  ./bin/mg5_aMC
 ####################
-MG5_aMC>generate  p p > t t~ b b~ [all=QCD]
+MG5_aMC>generate  p p > t t~ b b~ [QCD]
 MG5_aMC>output pp2ttbb_allQCD_20140709
 ###################
 
