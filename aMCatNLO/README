@@ -11,6 +11,7 @@ eval `scramv1 runtime -sh`
 2. Install
  + http://fastjet.fr/repo/fastjet-3.0.6.tar.gz
  + http://www.hepforge.org/archive/lhapdf/LHAPDF-6.1.3.tar.gz 
+    ++for boost: --with-boost=/cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/boost/1.51.0-cms5
  + http://lcgapp.cern.ch/project/simu/HepMC/download/HepMC-2.06.09.tar.gz
  + http://home.thep.lu.se/~torbjorn/pythia8/pythia8185.tgz
  + https://launchpad.net/mg5amcnlo/2.0/2.1.0/+download/MG5_aMC_v2.1.2.tar.gz 
