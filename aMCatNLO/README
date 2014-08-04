@@ -19,6 +19,8 @@ eval `scramv1 runtime -sh`
 /cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/fastjet/3.0.3-cms
 /cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/lhapdf/5.9.1-cms
 /cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/hepmc/2.06.07-cms3
+ + http://home.thep.lu.se/~torbjorn/pythia8/pythia8185.tgz
++++ ./configure --with-hepmc=/cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/hepmc/2.06.07-cms3  --with-hepmcversion=2.06.09 ; make -j 10
 
 Intall aMC@NLO
  + https://launchpad.net/mg5amcnlo/2.0/2.1.0/+download/MG5_aMC_v2.1.2.tar.gz 
