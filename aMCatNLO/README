@@ -77,12 +77,19 @@ to    PYTHIA8  = parton_shower
 
 ++++++++++++++++
 first, set environment for root, pythia8, madspin_card.dat, amcatnlo_configuration.txt and run_card.dat.
+vi amcatnlo_configuration.txt for condor setup
+-------
+ cluster_type = condor
+ cluster_queue = None
+-------
 second,
 > vi run2.sh (new)
 ./bin/generate_events --cluster <<EOF
 0
 0
 EOF
+> nohup ./run2.sh &
+____________
 > vi run.sh(old)
 ####################################################################
 #/bin/bash
