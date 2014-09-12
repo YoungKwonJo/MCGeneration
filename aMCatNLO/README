@@ -76,7 +76,14 @@ to    PYTHIA8  = parton_shower
 > cp madspin_card_default.dat madspin_card.dat
 
 ++++++++++++++++
-> vi run.sh
+first, set environment for root, pythia8, madspin_card.dat, amcatnlo_configuration.txt and run_card.dat.
+second,
+> vi run2.sh (new)
+./bin/generate_events --cluster <<EOF
+0
+0
+EOF
+> vi run.sh(old)
 ####################################################################
 #/bin/bash
 
