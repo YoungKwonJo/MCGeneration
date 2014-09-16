@@ -55,6 +55,26 @@ MG5_aMC>generate  p p >  t t~ b b~ [QCD]
 MG5_aMC>output pp2ttbb_allqcd_20140709
 MG5_aMC> press a key 'ctrl+D'.
 
+> vi ~/.bashrc
+function mycmssetup()
+{
+  CurrentDir=`pwd`
+
+  source /cvmfs/cms.cern.ch/cmsset_default.sh
+  export SCRAM_ARCH=slc6_amd64_gcc472
+
+  cd /cms/home/youngjo/CMSSW/CMSSW_5_3_19/src
+  eval `scramv1 runtime -sh`
+  #cmsenv
+  cd $CurrentDir
+
+  export PYTHIA8=/cms/home/youngjo/Madgraph/PYTHIA8/pythia8185
+  export PATH=$PYTHIA8/bin:$PATH
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHIA8/lib
+
+  #export TMVASYS=/home/youngjo/tmva/TMVA-v4.2.0/
+}
+
 4. Event generation
 >cd pp2ttbb_allqcd_20140709
 >vi Cards/amcatnlo_configuration.txt
@@ -89,69 +109,6 @@ second,
 0
 EOF
 > nohup ./run2.sh &
-____________
-> vi run.sh(old)
-####################################################################
-#/bin/bash
-
-nevt=${1}
-echo "%MSG-MG5 number of events requested = $nevt"
-
-rnum=${2}
-echo "%MSG-MG5 random seed used for the run = $rnum"
-
-name=${3}
-echo "%MSG-MG5 name = $name"
-
-nlo=${4}
-echo "%MSG-MG5 (NLO, LO), which? : $nlo"
-
-source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc6_amd64_gcc472
-
-cd /bla/bla/cmssw/CMSSW_5_3_19
-eval `scramv1 runtime -sh`
-#cmsenv
-cd -
-export PYTHIA8=/bla/bla/PYTHIA8/install
-export PATH=$PYTHIA8/bin:$PATH
-if [ ! $?LD_LIBRARY_PATH ]; then
-  export LD_LIBRARY_PATH=$PYTHIA8/lib
-else
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHIA8/lib
-fi
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/bla/bla/HepMC/install/lib
-
-LHEWORKDIR=`pwd`
-cd $LHEWORKDIR
-#cd /bla/bla/Madgraph/MG5_aMC_v2_1_2/pp2ll_allQCD_20140710
-#for batch system, you have to fix the link(LHEWORKDIR).
-
-echo "done" > runscript.dat
-echo "set nevents $nevt" >> runscript.dat
-echo "set iseed $rnum" >> runscript.dat
-echo "done" >> runscript.dat
-
-domadspin=0
-if [ -f ./Cards/madspin_card.dat ] ;then
-  #set random seed for madspin
-  rnum2=$(($rnum+1000000))
-  echo "$(echo `echo "set seed $rnum2"` | cat - ./Cards/madspin_card.dat)" > ./Cards/madspin_card.dat
-  domadspin=1
-fi
-
-runname=pythia8_iseed_${rnum}_${name}_${nlo}
-
-#generate events
-cat runscript.dat | ./bin/generate_events aMC@$nlo -x -n $runname
-
-exit 0
-##############################################################################
-
-+++++++++++++++++++
-> chmod 755 run.sh
-> nohup ./run.sh 10000 12 test5 NLO >& log5.txt &
-### nohup ./run.sh #_of_events seed name LO/NLO >& log_file_name &
 
 +++++++++++
 cd Delphes
