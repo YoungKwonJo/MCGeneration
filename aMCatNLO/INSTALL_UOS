@@ -66,7 +66,26 @@ MG5_aMC>output pp2ttbb_allQCD_20140709
 ###################
  1138  cd Cards/
  1140  cp madspin_card_default.dat madspin_card.dat
++++++++++++++++
+>vi ~/.bashrc
+function mycmssetup()
+{
+  CurrentDir=`pwd`
 
+  source /cvmfs/cms.cern.ch/cmsset_default.sh
+  export SCRAM_ARCH=slc6_amd64_gcc472
+
+  cd /cms/home/youngjo/CMSSW/CMSSW_5_3_19/src
+  eval `scramv1 runtime -sh`
+  #cmsenv
+  cd $CurrentDir
+
+  export PYTHIA8=/cms/home/youngjo/Madgraph/PYTHIA8/pythia8185
+  export PATH=$PYTHIA8/bin:$PATH
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHIA8/lib
+
+  #export TMVASYS=/home/youngjo/tmva/TMVA-v4.2.0/
+}
 ++++++++++++++++
 >run2.sh
  ./bin/generate_events --cluster <<EOF
