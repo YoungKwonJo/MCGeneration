@@ -10,11 +10,11 @@ root install
  1024  make -j 10
  1025  make install
 ++++++++++++++++
-tar zxvf boost_1_47_0.tar.gz
-cd boost_1_47_0
-./bootstrap.sh
-./bjam threading=multi --prefix=/cms/home/youngjo/newMadgraph/boost/install
-./b2 install --prefix=/cms/home/youngjo/newMadgraph/boost/install
+#tar zxvf boost_1_47_0.tar.gz
+#cd boost_1_47_0
+#./bootstrap.sh
+#./bjam threading=multi --prefix=/cms/home/youngjo/newMadgraph/boost/install
+#./b2 install --prefix=/cms/home/youngjo/newMadgraph/boost/install
 
 ++++++++++++++++
   922  wget http://www.hepforge.org/archive/lhapdf/LHAPDF-6.1.3.tar.gz
@@ -22,7 +22,7 @@ cd boost_1_47_0
   924  tar zxvf LHAPDF-6.1.3.tar.gz
   926  cd LHAPDF-6.1.3
  1007  ./configure --prefix=/home/youngjo/kcms09/LHAPDF/install --with-boost=/cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/boost/1.47.0
- 1090  ./configure --prefix=/cms/home/youngjo/newMadgraph/LHAPDF/install --with-boost=/cvmfs/cms.cern.ch/slc6_amd64_gcc481/external/boost/1.51.0-cms2 --disable-python
+ #1090  ./configure --prefix=/cms/home/youngjo/newMadgraph/LHAPDF/install --with-boost=/cvmfs/cms.cern.ch/slc6_amd64_gcc481/external/boost/1.51.0-cms2 --disable-python
  1008  make -j 9
  1009  make install
 
